@@ -6,7 +6,7 @@ Validate and transform between OCR file formats (hOCR, ALTO, PAGE, FineReader)
 
 ![Screenshot GUI](./screenshot.png)
 
-<!-- vim :GenTocGFM -->
+<!-- BEGIN-MARKDOWN-TOC -->
 * [Installation](#installation)
 * [Usage](#usage)
 	* [CLI](#cli)
@@ -22,6 +22,8 @@ Validate and transform between OCR file formats (hOCR, ALTO, PAGE, FineReader)
 	* [Validation API](#validation-api)
 	* [Supported Validation Formats](#supported-validation-formats)
 * [License](#license)
+
+<!-- END-MARKDOWN-TOC -->
 
 ## Installation
 
@@ -67,6 +69,8 @@ script (CLI), using a web interface (GUI) or in you own tools (API)
 
 * [`$PREFIX/share/ocr-fileformat/xslt`](./xslt) - XSLT stylesheets
 * [`$PREFIX/share/ocr-fileformat/xsd`](./xsd) - XSD schemas
+* [`$PREFIX/share/ocr-fileformat/script/transform`](./script/transform) - Transformation scripts
+* [`$PREFIX/share/ocr-fileformat/script/validate`](./script/validate) - Validation scripts
 
 ## Transformation
 
@@ -96,26 +100,38 @@ ocr-transform alto hocr sample.xml sample.hocr -- foo=bar
 
 Try `ocr-transform -h` to get an overview:
 
-```
-Usage: ocr-transform [-dl] <input-fmt> <output-fmt> [<input> [<output>]] [-- <saxon_opts>]
-Input formats:
-- 'alto'
-- 'hocr'
-Output formats:
-- 'alto2.0'
-- 'alto2.1'
-- 'hocr'
-Saxon-HE 9.7.0.4J from Saxonica
-Java version 1.7.0_95
-Usage: see http://www.saxonica.com/html/documentation/using-xsl/commandline.html
-Options available: -? -a -catalog -config -cr -diag -dtd -ea -expand -explain -export -ext -im -init -it -l -license -m -nogo -now -o -opt -or -outval -p -pack -quit -r -repeat -s -sa -scmin -strip -t -T -threads -TJ -TP -traceout -tree -u -val -versionmsg -warnings -x -xi -xmlversion -xsd -xsdversion -xsiloc -xsl -xsltversion -y
-Use -XYZ:? for details of option XYZ
-Params: 
-param=value           Set stylesheet string parameter
-+param=filename       Set stylesheet document parameter
-?param=expression     Set stylesheet parameter using XPath
-!param=value          Set serialization parameter
-```
+<!-- BEGIN-EVAL echo '<pre>';./bin/ocr-transform.sh -h 2>&1;echo '</pre>'  -->
+<pre>
+Usage: ocr-transform.sh [-dhL] <from> <to> [<infile> [<outfile>]] [-- <script-args>]
+
+    Options:
+        --help   -h      Show this help
+        --debug  -d      Increase debug level by 1, can be repeated
+        --list   -L      List transformations
+
+    Transformations:
+        alto2.0 alto3.0
+        alto2.0 alto3.1
+        alto2.0 hocr
+        alto2.1 alto3.0
+        alto2.1 alto3.1
+        alto2.1 hocr
+        gcv hocr
+        hocr alto2.0
+        hocr alto2.1
+
+    Saxon options:
+        Usage: see http://www.saxonica.com/html/documentation/using-xsl/commandline.html
+        Options available: -? -a -catalog -config -cr -diag -dtd -ea -expand -explain -export -ext -im -init -it -l -license -m -nogo -now -o -opt -or -outval -p -pack -quit -r -repeat -s -sa -scmin -strip -t -T -threads -TJ -TP -traceout -tree -u -val -versionmsg -warnings -x -xi -xmlversion -xsd -xsdversion -xsiloc -xsl -xsltversion -y
+        Use -XYZ:? for details of option XYZ
+        Params: 
+          param=value           Set stylesheet string parameter
+          +param=filename       Set stylesheet document parameter
+          ?param=expression     Set stylesheet parameter using XPath
+          !param=value          Set serialization parameter
+</pre>
+
+<!-- END-EVAL -->
 
 ### Transformation GUI
 
@@ -130,19 +146,34 @@ capable stylesheet transformer.
 
 ### Supported Transformations
 
-|  From ╲ To | hOCR                     | ALTO                     | PAGEXML                  | FineReader               |
-|-----------:|--------------------------|--------------------------|--------------------------|--------------------------|
-|       hOCR | -                        | :white_check_mark:       | :heavy_multiplication_x: | :heavy_multiplication_x: |
-|       ALTO | :white_check_mark:       | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |
-|       PAGE | :heavy_multiplication_x: | :heavy_multiplication_x: | -                        | :heavy_multiplication_x: |
-| FineReader | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | -                        |
+| From ╲ To           | hOCR | ALTO | PAGEXML | FineReader | Google Cloud Vision |
+| ---:                | ---  | ---  | ---     | ---        | ---                 |
+| hOCR                | -    | ✓    | -       | -          | -                   |
+| ALTO                | ✓    | ✓    | -       | -          | -                   |
+| PAGE                | -    | -    | -       | -          | -                   |
+| FineReader          | -    | -    | -       | -          | -                   |
+| Google Cloud Vision | ✓    | -    | -       | -          | -                   |
 
 ## Validation
 
-```
-Usage: ocr-validate [-dh] <schema> <file>
 
-```
+<!-- BEGIN-EVAL echo '<pre>';./bin/ocr-validate.sh -h 2>&1;echo '</pre>'  -->
+<pre>
+Usage: ocr-validate.sh [-dhL] <schema> <file> [<resultsFile>]
+
+    Options:
+        --help   -h      Show this help
+        --debug  -d      Increase debug level by 1, can be repeated
+        --list   -L      List available schemas
+
+    Schemas:
+        abbyy-6-schema-v1 abbyy-8-schema-v2 abbyy-9-schema-v1 abbyy-10-schema-v1 
+        alto-1-0 alto-1-1 alto-1-2 alto-1-3 alto-1-4 alto-2-0 alto-2-1 alto-2-2-draft alto-3-0 alto-3-1 
+        hocr 
+        page-2009-03-16 page-2010-01-12 page-2010-03-19 page-2013-07-15 
+</pre>
+
+<!-- END-EVAL -->
 
 ### Validation CLI
 
@@ -162,21 +193,19 @@ The XSD files are installed under `$PREFIX/share/ocr-fileformat/xsd`
 
 ### Supported Validation Formats
 
-|            | hOCR                     | ALTO               | PAGEXML                  | FineReader         |
-|-----------:|--------------------------|--------------------|--------------------------|--------------------|
-| Validation | :heavy_multiplication_x: | :white_check_mark: | :white_check_mark:       | :white_check_mark: |
+|            | hOCR | ALTO | PAGEXML | FineReader | Google Cloud Vision |
+| ---:       | ---  | ---  | ---     | ---        | ---                 |
+| Validation | ✓    | ✓    | ✓       | ✓          | -                   |
 
 
 ## License
 
-The XSL stylesheets for hOCR-ALTO and ALTO-hOCR transformation are licensed
-[Creative Commons Attribution-ShareAlike 4.0 International.(CC BY-SA
-4.0)](https://creativecommons.org/licenses/by-sa/4.0/legalcode).
-
 Projects included during the installation process (in [`./vendor`](./blob/master/vendor)):
+
 * [Saxon HE 9.7](http://saxon.sourceforge.net/#F9.7HE), [`MPL`](https://www.mozilla.org/MPL/).
 * [ALTOXML schema](/altoxml/schema), [`Open Source`](https://github.com/altoxml/schema/issues/37#issuecomment-218730230)
 * [PAGE schemas](http://www.primaresearch.org/schema/PAGE/gts/pagecontent/), `?`
 * [xsd-validator](/amouat/xsd-validator), `Apache 2.0`
 * ABBYY FineReader XSD, `?`
-* [hOCR-to-ALTO](https://github.com/kba/hOCR-to-ALTO) by Filip Kriz, `CC BY-SA 4.0`
+* [hOCR-to-ALTO](https://github.com/kba/hOCR-to-ALTO) by Filip Kriz, [`CC BY-SA 4.0`](https://creativecommons.org/licenses/by-sa/4.0/legalcode)
+* [gcv2hocr](https://github.com/dinosauria123/gcv2hocr) by Endo Michiaki, [`CC BY 4.0`](https://creativecommons.org/licenses/by/4.0/legalcode)
