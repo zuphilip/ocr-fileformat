@@ -1,5 +1,5 @@
 PKG_NAME = ocr-fileformat
-PKG_VERSION = 0.1.0
+PKG_VERSION = 0.2.0
 DOCKER_IMAGE = ubma/ocr-fileformat
 
 CP = cp -r
@@ -49,6 +49,8 @@ xslt: vendor
 	cd xslt && $(LN) ../vendor/hOCR-to-ALTO/hocr2alto2.1.xsl hocr__alto2.1.xsl
 	cd xslt && $(LN) ../vendor/hOCR-to-ALTO/alto2hocr.xsl alto2.0__hocr.xsl
 	cd xslt && $(LN) ../vendor/hOCR-to-ALTO/alto2hocr.xsl alto2.1__hocr.xsl
+	cd xslt && $(LN) ../vendor/hOCR-to-ALTO/hocr2text.xsl hocr__text.xsl
+	cd xslt && $(LN) ../vendor/hOCR-to-ALTO/alto2text.xsl alto__text.xsl
 	cd xslt && $(LN) alto2.0__alto3.0.xsl alto2.0__alto3.1.xsl
 	cd xslt && $(LN) alto2.0__alto3.0.xsl alto2.1__alto3.0.xsl
 	cd xslt && $(LN) alto2.0__alto3.0.xsl alto2.1__alto3.1.xsl
